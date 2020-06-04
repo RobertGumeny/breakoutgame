@@ -26,7 +26,7 @@ const ball = {
 
 const paddle = {
   x: canvas.width / 2 - 40,
-  y: canvas.height - 20,
+  y: canvas.height - 30,
   w: 80,
   h: 10,
   speed: 8,
@@ -93,16 +93,123 @@ function drawScore() {
   ctx.fillText(`Score: ${score}`, canvas.width - 100, 35)
 }
 
+// NOTE Move paddle on canvas
+function movePaddle() {
+  paddle.x += paddle.dx;
+
+  // Wall detection
+  // Right wall
+  if (paddle.x + paddle.w > canvas.width) {
+    paddle.x = canvas.width - paddle.w;
+  }
+  // Left wall
+  if (paddle.x < 0) {
+    paddle.x = 0;
+  }
+}
+
+// NOTE Move ball on canvas
+function moveBall() {
+  ball.x += ball.dx;
+  ball.y += ball.dy;
+
+  // Wall collision detection
+  // x-axis/right and left walls
+  if (ball.x + ball.size > canvas.width || ball.x - ball.size < 0) {
+    ball.dx *= -1;
+  }
+  // y-axis/top and bottom walls
+  if (ball.y + ball.size > canvas.height || ball.y - ball.size < 0) {
+    ball.dy *= -1;
+  }
+
+  // Paddle collision detection
+  if (ball.x - ball.size > paddle.x && ball.x + ball.size < paddle.x + paddle.w && ball.y + ball.size > paddle.y) {
+    ball.dy = -ball.speed;
+  }
+
+  // Brick collision detection
+  bricks.forEach(column => {
+    column.forEach(brick => {
+      if (brick.visible) {
+        if (ball.x - ball.size > brick.x && // Left side of brick collision check
+          ball.x + ball.size < brick.x + brick.w && // Right side of brick collision check
+          ball.y + ball.size > brick.y && // Top of brick collision check
+          ball.y - ball.size < brick.y + brick.h) { // Bottom of brick collision check
+          ball.dy *= -1;
+          brick.visible = false;
+          increaseScore();
+        }
+      }
+    })
+  })
+
+  // Hitting bottom wall triggers a game over
+  if (ball.y + ball.size > canvas.height) {
+    showAllBricks();
+    score = 0;
+  }
+}
+
+// NOTE Increase score
+function increaseScore() {
+  score++;
+  if (score % (brickRowCount * brickRowCount) === 0) {
+    showAllBricks();
+  }
+}
+
+// NOTE Show all bricks
+function showAllBricks() {
+  bricks.forEach(column => {
+    column.forEach(brick => {
+      brick.visible = true;
+    })
+  })
+}
 // NOTE Draw everything to canvas
 function draw() {
+  // Clear canvas
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
   drawBall()
   drawPaddle()
   drawScore()
   drawBricks();
 }
 
+// NOTE Update canvas drawing and animation
+function update() {
+  movePaddle();
+  moveBall();
 
-draw()
+  // Draw everything to canvas
+  draw();
+
+  requestAnimationFrame(update);
+}
+update();
+
+// NOTE Keydown/keyup events
+function keyDown(e) {
+  if (e.key === 'Right' || e.key === 'ArrowRight') {
+    paddle.dx = paddle.speed;
+  } else if (e.key === 'Left' || e.key === 'ArrowLeft') {
+    paddle.dx = -paddle.speed;
+  }
+}
+
+function keyUp(e) {
+  if (e.key === 'Right' || e.key === 'ArrowRight' || e.key === 'Left' || e.key === 'ArrowLeft') {
+    paddle.dx = 0;
+  }
+}
+
+
+// NOTE Keyboard event listeners
+
+document.addEventListener('keydown', keyDown);
+document.addEventListener('keyup', keyUp);
+
 // NOTE Rules show/hide event listeners
 
 rulesBtn.addEventListener('click', () => rules.classList.add('show'));
