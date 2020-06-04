@@ -25,7 +25,8 @@ canvas {
   background: #f1f1f1;
   display: block;
   border-radius: 10px;
-  margin-top: 10px;
+  margin-top: 20px;
+  margin-bottom: 20px;
 }
 
 .btn {

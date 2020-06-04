@@ -1,0 +1,17 @@
+1. Create canvas context
+2. Create and draw ball
+  2a. Ball will be an object with several properties
+3. Create and draw paddle
+  3a. Object with several properties drawn onto canvas
+4. Create bricks
+  4a. Using arrays and for-each loops to set up bricks
+  4b. Bricks will have visible or invisible property.
+5. Count/draw score
+6. Add update() - Animate - requestAnimationFrame(cb)
+7. Move paddle
+8. Keyboard event handlers (keyup/keydown)
+9. Move ball across screen
+10. Add wall boundaries
+11. Increase score when bricks are broken
+12. Lose - redraw bricks, reset score
+
