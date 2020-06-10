@@ -10,6 +10,8 @@ let gamePaused = true;
 let ndx = 0;
 let ndy = 0;
 
+let colors = ['#1d2d44', '#e15554', '#3bb273']
+
 const brickRowCount = 9;
 const brickColCount = 6;
 
@@ -45,6 +47,7 @@ const brickInfo = {
   padding: 10,
   offsetX: 45,
   offsetY: 60,
+  color: '',
   visible: true
 }
 
@@ -56,7 +59,8 @@ for (let i = 0; i < brickRowCount; i++) {
   for (let j = 0; j < brickColCount; j++) {
     const x = i * (brickInfo.w + brickInfo.padding) + brickInfo.offsetX;
     const y = j * (brickInfo.h + brickInfo.padding) + brickInfo.offsetY;
-    bricks[i][j] = { x, y, ...brickInfo };
+    brickInfo.color = colors[Math.floor(Math.random() * colors.length)];
+    bricks[i][j] = { x, y, ...brickInfo, };
   }
 }
 
@@ -84,7 +88,7 @@ function drawBricks() {
     column.forEach(brick => {
       ctx.beginPath();
       ctx.rect(brick.x, brick.y, brick.w, brick.h);
-      ctx.fillStyle = brick.visible ? '#1d2d44' : 'transparent';
+      ctx.fillStyle = brick.visible ? brick.color : 'transparent';
       ctx.fill();
       ctx.closePath;
     })
@@ -203,12 +207,13 @@ function keyDown(e) {
   } else if (e.key === 'Left' || e.key === 'ArrowLeft') {
     paddle.dx = -paddle.speed;
   }
-  if (e.which === 32 && gamePaused == true) {
-    gamePaused = false;
-  } else {
-    gamePaused = true;
+  if (e.which === 32) {
+    if (gamePaused == true) {
+      gamePaused = false;
+    } else {
+      gamePaused = true;
+    }
   }
-
 
 
 }
