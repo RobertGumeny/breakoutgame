@@ -6,6 +6,9 @@ const canvas = document.getElementById('canvas')
 const ctx = canvas.getContext('2d')
 
 let score = 0;
+let gamePaused = true;
+let ndx = 0;
+let ndy = 0;
 
 const brickRowCount = 9;
 const brickColCount = 6;
@@ -20,6 +23,7 @@ const ball = {
   speed: 4,
   dx: 4,
   dy: -4,
+  paused: true
 }
 
 // NOTE Create paddle properties
@@ -110,8 +114,10 @@ function movePaddle() {
 
 // NOTE Move ball on canvas
 function moveBall() {
-  ball.x += ball.dx;
-  ball.y += ball.dy;
+  if (gamePaused == false) {
+    ball.x += ball.dx;
+    ball.y += ball.dy;
+  }
 
   // Wall collision detection
   // x-axis/right and left walls
@@ -150,6 +156,7 @@ function moveBall() {
     score = 0;
   }
 }
+
 
 // NOTE Increase score
 function increaseScore() {
@@ -196,6 +203,14 @@ function keyDown(e) {
   } else if (e.key === 'Left' || e.key === 'ArrowLeft') {
     paddle.dx = -paddle.speed;
   }
+  if (e.which === 32 && gamePaused == true) {
+    gamePaused = false;
+  } else {
+    gamePaused = true;
+  }
+
+
+
 }
 
 function keyUp(e) {
