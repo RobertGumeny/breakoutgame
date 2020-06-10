@@ -21,3 +21,7 @@ Use the HTML5 Canvas Element and Vanilla JavaScript to allow the player to contr
 - Powerups?
 
 
+
+
+
+
