@@ -6,11 +6,12 @@ const canvas = document.getElementById('canvas')
 const ctx = canvas.getContext('2d')
 
 let score = 0;
+let gameStarted = false;
 let gamePaused = true;
 let ndx = 0;
 let ndy = 0;
 
-let colors = ['#1d2d44', '#e15554', '#3bb273']
+let colors = ['#1d2d44', '#e15554', '#3bb273', '#e1c554'] // NOTE Colors can be added/removed at any time.
 
 const brickRowCount = 9;
 const brickColCount = 6;
@@ -20,12 +21,11 @@ const brickColCount = 6;
 
 const ball = {
   x: canvas.width / 2,
-  y: canvas.height / 2 + 20,
+  y: canvas.height / 2 + 150,
   size: 10,
   speed: 4,
   dx: 4,
-  dy: -4,
-  paused: true
+  dy: -4
 }
 
 // NOTE Create paddle properties
@@ -94,11 +94,22 @@ function drawBricks() {
     })
   })
 }
-// NOTE Draw score
 
+// NOTE Draw score
 function drawScore() {
   ctx.font = '20px Ubuntu';
   ctx.fillText(`Score: ${score}`, canvas.width - 100, 35)
+}
+
+// NOTE Draw game start message
+function drawMessage(str) {
+  if (gameStarted == false) {
+    ctx.font = '30px Ubuntu';
+    ctx.textAlign = "center";
+    ctx.fillText(`${str}`, canvas.width / 2, 345)
+  } else {
+    ctx.fillText(``, 0, 0)
+  }
 }
 
 // NOTE Move paddle on canvas
@@ -156,9 +167,18 @@ function moveBall() {
 
   // Hitting bottom wall triggers a game over
   if (ball.y + ball.size > canvas.height) {
-    showAllBricks();
-    score = 0;
+    gameOver();
   }
+}
+
+// NOTE Game Over
+function gameOver() {
+  showAllBricks();
+  score = 0;
+  ball.x = canvas.width / 2;
+  ball.y = canvas.height / 2 + 150;
+  gamePaused = true;
+  gameStarted = false;
 }
 
 
@@ -182,9 +202,10 @@ function showAllBricks() {
 function draw() {
   // Clear canvas
   ctx.clearRect(0, 0, canvas.width, canvas.height);
-  drawBall()
-  drawPaddle()
-  drawScore()
+  drawBall();
+  drawPaddle();
+  drawScore();
+  drawMessage('Press Spacebar to start!');
   drawBricks();
 }
 
@@ -208,7 +229,11 @@ function keyDown(e) {
     paddle.dx = -paddle.speed;
   }
   if (e.which === 32) {
-    if (gamePaused == true) {
+    if (gamePaused == true && gameStarted == false) {
+      gamePaused = false;
+      gameStarted = true;
+      drawMessage('');
+    } else if (gamePaused == true && gameStarted == true) {
       gamePaused = false;
     } else {
       gamePaused = true;
