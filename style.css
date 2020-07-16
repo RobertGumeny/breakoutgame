@@ -50,6 +50,12 @@ canvas {
   transform: scale(0.98);
 }
 
+.message {
+  margin: 10px auto;
+  font-size: 25px;
+  color: #f1f1f1;
+}
+
 .rules {
   position: absolute;
   display: flex;

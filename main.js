@@ -2,6 +2,7 @@ const rulesBtn = document.getElementById('rules-btn')
 const closeBtn = document.getElementById('close-btn')
 const rules = document.getElementById('rules')
 const canvas = document.getElementById('canvas')
+const messageText = document.getElementById('message')
 /** @type {CanvasRenderingContext2D} */
 const ctx = canvas.getContext('2d')
 
@@ -13,8 +14,8 @@ let ndy = 0;
 
 let colors = ['#1d2d44', '#e15554', '#3bb273', '#e1c554'] // NOTE Colors can be added/removed at any time.
 
-const brickRowCount = 9;
-const brickColCount = 6;
+const brickColCount = 9;
+const brickRowCount = 7;
 
 
 // NOTE Create ball properties
@@ -48,18 +49,21 @@ const brickInfo = {
   offsetX: 45,
   offsetY: 60,
   color: '',
+  value: 0,
   visible: true
 }
 
 // NOTE Create bricks
 
 const bricks = [];
-for (let i = 0; i < brickRowCount; i++) {
+for (let i = 0; i < brickColCount; i++) {
   bricks[i] = [];
-  for (let j = 0; j < brickColCount; j++) {
+  for (let j = 0; j < brickRowCount; j++) {
     const x = i * (brickInfo.w + brickInfo.padding) + brickInfo.offsetX;
     const y = j * (brickInfo.h + brickInfo.padding) + brickInfo.offsetY;
-    brickInfo.color = colors[Math.floor(Math.random() * colors.length)];
+    brickInfo.value = Math.ceil(Math.random() * 4);
+    // brickInfo.color = colors[Math.floor(Math.random() * colors.length)]; NOTE determine colors at random
+    brickInfo.color = colors[brickInfo.value - 1]; // NOTE determine color based on value
     bricks[i][j] = { x, y, ...brickInfo, };
   }
 }
@@ -101,15 +105,9 @@ function drawScore() {
   ctx.fillText(`Score: ${score}`, canvas.width - 100, 35)
 }
 
-// NOTE Draw game start message
+// NOTE Draw in-game message
 function drawMessage(str) {
-  if (gameStarted == false) {
-    ctx.font = '30px Ubuntu';
-    ctx.textAlign = "center";
-    ctx.fillText(`${str}`, canvas.width / 2, 345)
-  } else {
-    ctx.fillText(``, 0, 0)
-  }
+  messageText.innerText = str;
 }
 
 // NOTE Move paddle on canvas
@@ -159,7 +157,7 @@ function moveBall() {
           ball.y - ball.size < brick.y + brick.h) { // Bottom of brick collision check
           ball.dy *= -1;
           brick.visible = false;
-          increaseScore();
+          increaseScore(brick.value);
         }
       }
     })
@@ -183,8 +181,8 @@ function gameOver() {
 
 
 // NOTE Increase score
-function increaseScore() {
-  score++;
+function increaseScore(val) {
+  score += val;
   if (score % (brickRowCount * brickRowCount) === 0) {
     showAllBricks();
   }
@@ -205,7 +203,6 @@ function draw() {
   drawBall();
   drawPaddle();
   drawScore();
-  drawMessage('Press Spacebar to start!');
   drawBricks();
 }
 
@@ -232,11 +229,13 @@ function keyDown(e) {
     if (gamePaused == true && gameStarted == false) {
       gamePaused = false;
       gameStarted = true;
-      drawMessage('');
+      drawMessage('Press Spacebar to Pause!');
     } else if (gamePaused == true && gameStarted == true) {
       gamePaused = false;
+      drawMessage('Press Spacebar to Pause!');
     } else {
       gamePaused = true;
+      drawMessage('Game Paused.');
     }
   }
 
