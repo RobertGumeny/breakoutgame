@@ -61,7 +61,13 @@ for (let i = 0; i < brickColCount; i++) {
   for (let j = 0; j < brickRowCount; j++) {
     const x = i * (brickInfo.w + brickInfo.padding) + brickInfo.offsetX;
     const y = j * (brickInfo.h + brickInfo.padding) + brickInfo.offsetY;
-    brickInfo.value = Math.ceil(Math.random() * 4);
+    if (j < 1) {
+      brickInfo.value = 3;
+    } else if (j > 1 && j < 3) {
+      brickInfo.value = 2;
+    } else if (j > 3) {
+      brickInfo.value = 1;
+    }
     // brickInfo.color = colors[Math.floor(Math.random() * colors.length)]; NOTE determine colors at random
     brickInfo.color = colors[brickInfo.value - 1]; // NOTE determine color based on value
     bricks[i][j] = { x, y, ...brickInfo, };
